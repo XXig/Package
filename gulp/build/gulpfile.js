@@ -5,29 +5,34 @@ rev = require('gulp-rev-append'),
 cssver = require('gulp-make-css-url-version'),
 sever = require('browser-sync');
 
+var srclj = '../src',
+    distlj = '../app';
+
+
 gulp.task('cssmin',function () {
-	return plugins.rubySass('../src/css/*.scss', { style: 'compact' })
+	return plugins.rubySass(srclj+'/css/*.scss', { style: 'compact' })
 	.on('error', function (err) {console.error(err.message)})
 	.pipe(plugins.autoprefixer({
-		browsers: ['last 2 versions', 'Android >= 4.0','ie 8', 'ie 9',],
+		browsers: ['> 5%','last 2 versions', 'Android >= 4.0'],
+		// browsers: ['> 5%','last 2 versions', 'ie 6-11'],
 		cascade: false, 
 		remove:false 
 	}))
-	.pipe(gulp.dest('../src/css'))
+	.pipe(gulp.dest(srclj+'/css'))
 	.pipe(cssver()) 
 	.pipe(plugins.rename({ suffix: '.min' }))
 	.pipe(plugins.minifyCss({
 		advanced: false,
-		compatibility: 'ie7',//保留ie7及以下兼容写法 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
+		compatibility: 'ie8',// 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
 		keepBreaks: false,
 		keepSpecialComments: '*'
 	}))
-	.pipe(gulp.dest('../app/css'));
+	.pipe(gulp.dest(distlj+'/css'));
 });
 
 gulp.task('jsmin', function () {
-	return gulp.src(['../src/js/*.js','!../src/js/{1,3}.js'])//除了1、3 
-	.pipe(plugins.changed('../app/js')) 
+	return gulp.src([srclj+'/js/*.js','!'+srclj+'/js/{1,3}.js'])//除了1、3 
+	.pipe(plugins.changed(distlj+'/js')) 
 	.pipe(plugins.uglify({
 		mangle: true,
 		compress: true,
@@ -35,46 +40,46 @@ gulp.task('jsmin', function () {
 	}))
 	.pipe(plugins.rename({ suffix: '.min' }))
 	// .pipe(plugins.concat('all.js'))
-	.pipe(gulp.dest('../app/js'));
+	.pipe(gulp.dest(distlj+'/js'));
 });
 
 gulp.task('imgmin', function(){
-	return gulp.src(['../src/images/*.{png,jpg}','../src/images/**/*.{png,jpg}']) 
-	.pipe(plugins.changed('../app/images'))
+	return gulp.src([srclj+'/images/*.{png,jpg}',srclj+'/images/**/*.{png,jpg}']) 
+	.pipe(plugins.changed(distlj+'/images'))
 	.pipe(plugins.tinypng('vo5bIIOTS-Z3R9hS0yJJbfjO9OHDu_v5'))
-	.pipe(gulp.dest('../app/images')); 
+	.pipe(gulp.dest(distlj+'/images')); 
 });
 
 gulp.task('sever', function () {
 	var files = [
-	'../src/**/*.html',
-	'../src/css/**/*.css',
-	'../src/images/**/*.{png,jpg}',
-	'../src/js/**/*.js'
+	srclj+'/**/*.html',
+	srclj+'/css/**/*.css',
+	srclj+'/images/**/*.{png,jpg}',
+	srclj+'/js/**/*.js'
 	];
 	sever.init(files, {
 		server: {
-			baseDir: '../src'
+			baseDir: srclj
 		}
 	});
 });
 
 gulp.task('default', function () {
-	return gulp.src('../app/**/*', {read: false})
+	return gulp.src(distlj+'/**/*', {read: false})
 	.pipe(plugins.clean());
 });
 
 gulp.task('watch',function(){ 
 	gulp.start('jsmin', 'cssmin', 'imgmin','sever');
-	gulp.watch('../src/**/*', ['jsmin','cssmin','app','imgmin']);
+	gulp.watch(srclj+'/**/*', ['jsmin','cssmin','app','imgmin']);
 });
 
 gulp.task('app', function(){
-	return gulp.src('../src/html/*.html')
+	return gulp.src(srclj+'/html/*.html')
 	.pipe(plugins.useref())
-	.pipe(gulp.dest('../app/html'))
+	.pipe(gulp.dest(distlj+'/html'))
 	.pipe(rev())
-	.pipe(gulp.dest('../app/html'));
+	.pipe(gulp.dest(distlj+'/html'));
 });
 // npm install cnpm -g --registry=https://registry.npm.taobao.org 
 // 查看其版本号cnpm -v或关闭命令提示符重新打开
