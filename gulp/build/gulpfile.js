@@ -64,13 +64,18 @@ gulp.task('sever', function () {
 	});
 });
 
+gulp.task('copy', function() {
+    return gulp.src([srclj+'/font/**/*',srclj+'/media/**/*',])
+        .pipe(gulp.dest(distlj+'/'));
+});
+
 gulp.task('default', function () {
 	return gulp.src(distlj+'/**/*', {read: false})
 	.pipe(plugins.clean());
 });
 
 gulp.task('watch',function(){ 
-	gulp.start('jsmin', 'cssmin', 'imgmin','sever');
+	gulp.start('copy','jsmin', 'cssmin', 'imgmin','sever');
 	gulp.watch(srclj+'/**/*', ['jsmin','cssmin','app','imgmin']);
 });
 
