@@ -2,11 +2,12 @@ var gulp = require('gulp'),
 gulpLoadPlugins = require('gulp-load-plugins'),
 plugins = gulpLoadPlugins(),
 rev = require('gulp-rev-append'),
+es2015 = require('babel-preset-es2015'), 
 cssver = require('gulp-make-css-url-version'),
 sever = require('browser-sync');
 
 var srclj = '../src',
-    distlj = '../app';
+distlj = '../app';
 
 
 gulp.task('cssmin',function () {
@@ -31,8 +32,9 @@ gulp.task('cssmin',function () {
 });
 
 gulp.task('jsmin', function () {
-	return gulp.src([srclj+'/js/*.js','!'+srclj+'/js/{1,3}.js'])//除了1、3 
+	return gulp.src([srclj+'/js/*.js','!'+srclj+'/js/[{1,3}].js'])//除了1、3 
 	.pipe(plugins.changed(distlj+'/js')) 
+	.pipe(plugins.babel({presets:[es2015]}))
 	.pipe(plugins.uglify({
 		mangle: true,
 		compress: true,
@@ -40,6 +42,12 @@ gulp.task('jsmin', function () {
 	}))
 	.pipe(plugins.rename({ suffix: '.min' }))
 	// .pipe(plugins.concat('all.js'))
+	.pipe(gulp.dest(distlj+'/js'));
+});
+
+gulp.task('es6', function() {
+	return gulp.src([srclj+'/js/1.js'])
+	.pipe(plugins.babel({presets:[es2015]}))
 	.pipe(gulp.dest(distlj+'/js'));
 });
 
@@ -65,13 +73,13 @@ gulp.task('sever', function () {
 });
 
 gulp.task('copy', function() {
-    return gulp.src([srclj+'/**/*','!'+srclj+'/css/*','!'+srclj+'/html/*','!'+srclj+'/images/*','!'+srclj+'/js/*'])
-        .pipe(gulp.dest(distlj));
+	return gulp.src([srclj+'/**/*','!'+srclj+'/css/*','!'+srclj+'/html/*','!'+srclj+'/images/*','!'+srclj+'/js/*'])
+	.pipe(gulp.dest(distlj));
 });
 
 gulp.task('copyig', function() {
-    return gulp.src(['gulpfile.js','package.json'])
-        .pipe(gulp.dest(srclj+'/config'));
+	return gulp.src(['gulpfile.js','package.json'])
+	.pipe(gulp.dest(srclj+'/config'));
 });
 
 gulp.task('default', function () {
