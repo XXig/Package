@@ -1,6 +1,7 @@
 var gulp = require('gulp'), 
 gulpLoadPlugins = require('gulp-load-plugins'),
 plugins = gulpLoadPlugins(),
+sass = require('gulp-sass'),
 rev = require('gulp-rev-append'),
 es2015 = require('babel-preset-es2015'), 
 cssver = require('gulp-make-css-url-version'),
@@ -11,9 +12,12 @@ distlj = '../app';
 
 
 gulp.task('cssmin',function () {
-	return plugins.rubySass(srclj+'/css/*.scss', { style: 'compact' })
-	.pipe($.changed(srclj+'/css')) 
-	.on('error', function (err) {console.error(err.message)})
+	// return plugins.rubySass(srclj+'/css/*.scss', { style: 'compact' })
+	// .pipe($.changed(srclj+'/css')) 
+	// .on('error', function (err) {console.error(err.message)})
+	return gulp.src(srclj+'/css/*.scss')
+	.pipe(sass().on('error', sass.logError))
+	.pipe(gulp.dest(srclj+'/css'))
 	.pipe(plugins.autoprefixer({
 		browsers: ['> 5%','last 2 versions', 'Android >= 4.0'],
 		// browsers: ['> 5%','last 2 versions', 'ie 6-11'],
