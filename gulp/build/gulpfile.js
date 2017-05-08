@@ -12,6 +12,7 @@ distlj = '../app';
 
 gulp.task('cssmin',function () {
 	return plugins.rubySass(srclj+'/css/*.scss', { style: 'compact' })
+	.pipe($.changed(srclj+'/css')) 
 	.on('error', function (err) {console.error(err.message)})
 	.pipe(plugins.autoprefixer({
 		browsers: ['> 5%','last 2 versions', 'Android >= 4.0'],
