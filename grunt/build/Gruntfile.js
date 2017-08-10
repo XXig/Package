@@ -87,7 +87,7 @@ module.exports = function(grunt){
     watch:{
       build:{
         files:['../src/images/*','../src/html/*.html','../src/js/*.js','../src/css/*'],
-        tasks:['sass','autoprefixer','uglify','cssmin','copy','inline'],
+        tasks:['sass','autoprefixer','uglify','cssmin','copy','inline','usemin'],
         options:{ spawn:false}
       }
     }
