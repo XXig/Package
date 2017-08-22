@@ -102,6 +102,8 @@ gulp.task('app', function(){
 	.pipe(plugins.useref())
 	.pipe(gulp.dest(distlj+'/html'))
 	.pipe(rev())
+	.pipe(gulp.dest(distlj+'/html'))
+	.pipe(plugins.usemin())
 	.pipe(gulp.dest(distlj+'/html'));
 });
 // npm install cnpm -g --registry=https://registry.npm.taobao.org 
