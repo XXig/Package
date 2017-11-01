@@ -1,6 +1,5 @@
 var gulp = require('gulp'), 
-gulpLoadPlugins = require('gulp-load-plugins'),
-plugins = gulpLoadPlugins(),
+$ = require('gulp-load-plugins')(),
 sass = require('gulp-sass'),
 rev = require('gulp-rev-append'),
 es2015 = require('babel-preset-es2015'), 
@@ -12,13 +11,13 @@ distlj = '../app';
 
 
 gulp.task('cssmin',function () {
-	// return plugins.rubySass(srclj+'/css/*.scss', { style: 'compact' })
+	// return $.rubySass(srclj+'/css/*.scss', { style: 'compact' })
 	// .pipe($.changed(srclj+'/css')) 
 	// .on('error', function (err) {console.error(err.message)})
 	return gulp.src(srclj+'/css/*.scss')
 	.pipe(sass().on('error', sass.logError))
 	.pipe(gulp.dest(srclj+'/css'))
-	.pipe(plugins.autoprefixer({
+	.pipe($.autoprefixer({
 		browsers: ['> 5%','last 2 versions', 'Android >= 4.0'],
 		// browsers: ['> 5%','last 2 versions', 'ie 6-11'],
 		cascade: false, 
@@ -26,8 +25,8 @@ gulp.task('cssmin',function () {
 	}))
 	.pipe(gulp.dest(srclj+'/css'))
 	.pipe(cssver()) 
-	.pipe(plugins.rename({ suffix: '.min' }))
-	.pipe(plugins.minifyCss({
+	.pipe($.rename({ suffix: '.min' }))
+	.pipe($.minifyCss({
 		advanced: false,
 		compatibility: 'ie8',// 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
 		keepBreaks: false,
@@ -38,28 +37,28 @@ gulp.task('cssmin',function () {
 
 gulp.task('jsmin', function () {
 	return gulp.src([srclj+'/js/*.js','!'+srclj+'/js/[{1,3}].js'])//除了1、3 
-	.pipe(plugins.changed(distlj+'/js')) 
-	.pipe(plugins.babel({presets:[es2015]}))
-	.pipe(plugins.uglify({
+	.pipe($.changed(distlj+'/js')) 
+	.pipe($.babel({presets:[es2015]}))
+	.pipe($.uglify({
 		mangle: true,
 		compress: true,
 		preserveComments: 'some' 
 	}))
-	.pipe(plugins.rename({ suffix: '.min' }))
-	// .pipe(plugins.concat('all.js'))
+	.pipe($.rename({ suffix: '.min' }))
+	// .pipe($.concat('all.js'))
 	.pipe(gulp.dest(distlj+'/js'));
 });
 
 gulp.task('es6', function() {
 	return gulp.src([srclj+'/js/1.js'])
-	.pipe(plugins.babel({presets:[es2015]}))
+	.pipe($.babel({presets:[es2015]}))
 	.pipe(gulp.dest(distlj+'/js'));
 });
 
 gulp.task('imgmin', function(){
 	return gulp.src([srclj+'/images/*.{png,jpg}',srclj+'/images/**/*.{png,jpg}']) 
-	.pipe(plugins.changed(distlj+'/images'))
-	.pipe(plugins.tinypng('vo5bIIOTS-Z3R9hS0yJJbfjO9OHDu_v5'))
+	.pipe($.changed(distlj+'/images'))
+	.pipe($.tinypng('vo5bIIOTS-Z3R9hS0yJJbfjO9OHDu_v5'))
 	.pipe(gulp.dest(distlj+'/images')); 
 });
 
@@ -89,7 +88,7 @@ gulp.task('copyig', function() {
 
 gulp.task('default', function () {
 	return gulp.src(distlj+'/**/*', {read: false})
-	.pipe(plugins.clean());
+	.pipe($.clean());
 });
 
 gulp.task('watch',function(){ 
@@ -99,11 +98,11 @@ gulp.task('watch',function(){
 
 gulp.task('app', function(){
 	return gulp.src(srclj+'/html/*.html')
-	.pipe(plugins.useref())
+	.pipe($.useref())
 	.pipe(gulp.dest(distlj+'/html'))
 	.pipe(rev())
 	.pipe(gulp.dest(distlj+'/html'))
-	.pipe(plugins.usemin())
+	.pipe($.usemin())
 	.pipe(gulp.dest(distlj+'/html'));
 });
 // npm install cnpm -g --registry=https://registry.npm.taobao.org 
